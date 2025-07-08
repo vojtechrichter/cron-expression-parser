@@ -25,7 +25,7 @@ final readonly class Parser
         FieldType::WeekDay->value => [0, 6]
     ];
 
-    private const int MAX_ITERATIONS = 4 * 365 * 24 * 60 * 60;
+    public const int MAX_ITERATIONS = 4 * 365 * 24 * 60 * 60;
 
     /**
      * @param array<int, array<int>> $fields
