@@ -49,6 +49,6 @@ final readonly class InternalParser
      */
     private function parseFieldPart(string $part, FieldType $type): array
     {
-
+        // TODO: implement
     }
 }
