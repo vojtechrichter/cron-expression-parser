@@ -6,6 +6,9 @@ namespace Vojtechrichter\CronExpressionParser;
 
 final readonly class Validator
 {
+    /**
+     * @param array<int, array<int>> $fields
+     */
     public function __construct(
         private array $fields
     ) {

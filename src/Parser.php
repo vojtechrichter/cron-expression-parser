@@ -37,6 +37,29 @@ final readonly class Parser
 
     public static function fromExpression(string $expression): self
     {
-        return self::class;
+        return new self(new InternalParser()->parse($expression));
+    }
+
+    public function getNextRun(?\DateTimeImmutable $from = null): \DateTimeImmutable
+    {
+        $from = $from ?? new \DateTimeImmutable();
+        $resolver = new NextRunResolver($this->fields);
+
+        return $resolver->calculate($from);
+    }
+
+    public function matches(\DateTimeImmutable $datetime): bool
+    {
+        $validator = new Validator($this->fields);
+
+        return $validator->isValid($datetime);
+    }
+
+    /**
+     * @return array<int, array<int>>
+     */
+    public function getFields(): array
+    {
+        return $this->fields;
     }
 }

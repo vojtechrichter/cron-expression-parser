@@ -7,7 +7,7 @@ namespace Vojtechrichter\CronExpressionParser;
 final readonly class NextRunResolver
 {
     /**
-     * @param array $fields<int, array<int>> $fields
+     * @param array<int, array<int>> $fields
      */
     public function __construct(
         private array $fields
@@ -58,12 +58,14 @@ final readonly class NextRunResolver
             return $datetime->setTime($nextHour, $this->fields[FieldType::Minute->value][0], $this->fields[FieldType::Second->value][0]);
         }
 
+        // Try to increment day and reset time
         $nextDay = $this->getNextValue($day, $this->fields[FieldType::Day->value]);
         if ($nextDay > $day && $nextDay <= cal_days_in_month(CAL_GREGORIAN, $month, $year)) {
             return $datetime->setDate($year, $month, $day)
                 ->setTime($this->fields[FieldType::Hour->value][0], $this->fields[FieldType::Minute->value][0], $this->fields[FieldType::Second->value][0]);
         }
 
+        // Increment year and reset everything
         $nextMonth = $this->getNextValue($month, $this->fields[FieldType::Month->value]);
         if ($nextMonth > $month) {
             return $datetime->setDate($year, $nextMonth, $this->fields[FieldType::Day->value][0])
@@ -74,6 +76,11 @@ final readonly class NextRunResolver
             ->setTime($this->fields[FieldType::Hour->value][0], $this->fields[FieldType::Minute->value][0], $this->fields[FieldType::Second->value][0]);
     }
 
+    /**
+     * @param int $current
+     * @param array<int> $validValues
+     * @return int
+     */
     private function getNextValue(int $current, array $validValues): int
     {
         sort($validValues);

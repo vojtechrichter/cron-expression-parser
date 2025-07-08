@@ -4,16 +4,25 @@ declare(strict_types=1);
 
 namespace Vojtechrichter\CronExpressionParser;
 
+use http\Exception\RuntimeException;
 use Vojtechrichter\CronExpressionParser\Exceptions\CronExpressionException;
 
 final readonly class InternalParser
 {
+    /**
+     * @param string $expression
+     * @return array<int, array<int>>
+     */
     public function parse(string $expression): array
     {
         $parts = preg_split('/\s+/', trim($expression));
 
+        if (!$parts) {
+            throw new RuntimeException('Regular expression parsing failed');
+        }
+
         if (count($parts) !== 6) {
-            throw CronExpressionException::invalidFieldCount(count($parts));
+            throw CronExpressionException::invalidFieldCount((int) count($parts));
         }
 
         return [
@@ -41,7 +50,7 @@ final readonly class InternalParser
         $parts = explode(',', $field);
 
         foreach ($parts as $part) {
-            $values = [...$values, $this->parseFieldPart($part, $type)];
+            $values = [...$values, ...$this->parseFieldPart($part, $type)];
         }
 
         return array_unique($values);
@@ -61,7 +70,7 @@ final readonly class InternalParser
             if ($range === '*') {
                 $start = Parser::RANGES[$type->value][0];
                 $end = Parser::RANGES[$type->value][1];
-            } else if (str_contains($part, '-')) {
+            } elseif (str_contains($part, '-')) {
                 [$start, $end] = explode('-', $part, 2);
                 $start = $this->parseValue($start, $type);
                 $end = $this->parseValue($end, $type);
