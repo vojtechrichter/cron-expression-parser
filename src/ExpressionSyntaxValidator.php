@@ -18,9 +18,10 @@ final readonly class ExpressionSyntaxValidator
             throw CronExpressionException::invalidSyntax('Expression cannot be empty');
         }
 
+        /** @var array<string> $parts */ // @phpstan-ignore varTag.nativeType
         $parts = preg_split('/\s+/', $expression);
 
-        if (count($parts) !== 6) {
+        if ($parts && count($parts) !== 6) {
             throw CronExpressionException::invalidFieldCount(count($parts));
         }
 
