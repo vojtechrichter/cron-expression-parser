@@ -20,4 +20,9 @@ final class CronExpressionException extends \InvalidArgumentException
 
         return new self(sprintf('Value %d is out of range [%d-%d] for field type %d', $value, $allowedRange[0], $allowedRange[1], $fieldType->name));
     }
+
+    public static function invalidSyntax(string $message): self
+    {
+        return new self(sprintf('Syntax error: %s', $message));
+    }
 }
