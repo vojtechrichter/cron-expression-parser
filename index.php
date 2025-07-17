@@ -6,9 +6,10 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 date_default_timezone_set('Europe/Prague');
 
-try {
-    $parser = \Vojtechrichter\CronExpressionParser\Parser::fromExpression('*/30 * * * * *');
-    echo 'Next run: ' . $parser->getNextRun()->format('j.m.Y H:i:s') . PHP_EOL;
-} catch (\RuntimeException $e) {
-    echo 'Next run: ' . $e->getMessage() . PHP_EOL;
-}
+$validator = new \Vojtechrichter\CronExpressionParser\ExpressionSyntaxValidator();
+
+// returns bool value
+var_dump($validator->isValid('0 0 9 * jan-dec mon-fri'));
+
+// throws an exception on error
+$validator->validate('0 0 9 * jan-dec mon-fri');
