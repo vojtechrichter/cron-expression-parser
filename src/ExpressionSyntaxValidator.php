@@ -165,7 +165,7 @@ final readonly class ExpressionSyntaxValidator
 
             if ($fieldType->name === 'Month') {
                 $validNames = ' (valid names: ' . implode(', ', array_keys(Parser::MONTHS_MAPPING)) . ')';
-            } else if ($fieldType->name === 'WeekDay') {
+            } elseif ($fieldType->name === 'WeekDay') {
                 $validNames = ' (valid names: ' . implode(', ', array_keys(Parser::WEEKDAYS_MAPPING)) . ')';
             }
 
@@ -197,7 +197,7 @@ final readonly class ExpressionSyntaxValidator
 
     /**
      * @param FieldType $fieldType
-     * @return array{names: array<string, int>, range: array<int, int>}
+     * @return array{name: 'Day'|'Hour'|'Minute'|'Month'|'Second'|'WeekDay', range: array{0, 6|23|59}|array{1, 12|31}, names?: array{jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12}|array{sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6}}
      */
     public function getFieldInfo(FieldType $fieldType): array
     {
@@ -208,7 +208,7 @@ final readonly class ExpressionSyntaxValidator
 
         if ($fieldType->name === 'Month') {
             $info['names'] = Parser::MONTHS_MAPPING;
-        } else if ($fieldType->name === 'WeekDay') {
+        } elseif ($fieldType->name === 'WeekDay') {
             $info['names'] = Parser::WEEKDAYS_MAPPING;
         }
 
