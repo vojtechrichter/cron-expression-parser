@@ -46,22 +46,22 @@ final readonly class ExpressionSyntaxValidator
         $fieldName = $fieldType->name;
 
         if ($field === '') {
-            throw CronExpressionException::invalidSyntax('Field \'{$fieldName}\' cannot be empty');
+            throw CronExpressionException::invalidSyntax("Field '{$fieldName}' cannot be empty");
         }
 
         if (!preg_match(self::VALID_CHARACTERS_REGEXP, $field)) {
-            throw CronExpressionException::invalidSyntax('Field \'{$fieldName}\' contains invalid characters');
+            throw CronExpressionException::invalidSyntax("Field '{$fieldName}' contains invalid characters");
         }
 
         if (preg_match('/,,|^,|,$/', $field)) {
-            throw CronExpressionException::invalidSyntax('Field \'{$fieldName}\' has malformed comma usage: \'{$field}\'');
+            throw CronExpressionException::invalidSyntax("Field '{$fieldName}' has malformed comma usage: '{$field}'");
         }
 
         $parts = explode(',', $field);
         foreach ($parts as $part) {
             $part = trim($part);
             if ($part === '') {
-                throw CronExpressionException::invalidSyntax('Empty part found in field \'{$fieldName}\'');
+                throw CronExpressionException::invalidSyntax("Empty part found in field '{$fieldName}'");
             }
             $this->validateFieldPart($part, $fieldType);
         }
@@ -69,6 +69,8 @@ final readonly class ExpressionSyntaxValidator
 
     private function validateFieldPart(string $part, FieldType $fieldType): void
     {
+        $fieldName = $fieldType->name;
+
         if (str_contains($part, '/')) {
             $stepParts = explode('/', $part);
 
@@ -92,7 +94,7 @@ final readonly class ExpressionSyntaxValidator
             }
 
             if ($range === '') {
-                throw CronExpressionException::invalidSyntax('Range cannot be empty before step in field \'{$fieldName}\': \'{$part}\'');
+                throw CronExpressionException::invalidSyntax("Range cannot be empty before step in field '{$fieldName}': '{$part}'");
             }
 
             if ($range !== '*') {
@@ -117,13 +119,13 @@ final readonly class ExpressionSyntaxValidator
             $rangeParts = explode('-', $part);
 
             if (count($rangeParts) !== 2) {
-                throw CronExpressionException::invalidSyntax('Invalid range syntax in field \'{$fieldName}\': \'{$part}\'');
+                throw CronExpressionException::invalidSyntax("Invalid range syntax in field '{$fieldName}': '{$part}'");
             }
 
             [$start, $end] = $rangeParts;
 
             if ($start === '' || $end === '') {
-                throw CronExpressionException::invalidSyntax('Range values cannot be empty in field \'{$fieldName}\': \'{$part}\'');
+                throw CronExpressionException::invalidSyntax("Range values cannot be empty in field '{$fieldName}': '{$part}'");
             }
 
             $this->validateSingleValue($start, $fieldType);
@@ -133,7 +135,7 @@ final readonly class ExpressionSyntaxValidator
             $endValue = $this->parseValueForValidation($end, $fieldType);
 
             if ($startValue > $endValue) {
-                throw CronExpressionException::invalidSyntax('Invalid range in field \'{$fieldName}\': start value {$startValue} is great than end value {$endValue}');
+                throw CronExpressionException::invalidSyntax("Invalid range in field '{$fieldName}': start value {$startValue} is great than end value {$endValue}");
             }
 
             return;
@@ -147,7 +149,7 @@ final readonly class ExpressionSyntaxValidator
         $fieldName = $fieldType->name;
 
         if ($value === '') {
-            throw CronExpressionException::invalidSyntax('Value cannot be empty in field \'{$fieldName}\'');
+            throw CronExpressionException::invalidSyntax("Value cannot be empty in field '{$fieldName}'");
         }
 
         $lowerValue = strtolower($value);
@@ -169,14 +171,14 @@ final readonly class ExpressionSyntaxValidator
                 $validNames = ' (valid names: ' . implode(', ', array_keys(Parser::WEEKDAYS_MAPPING)) . ')';
             }
 
-            throw CronExpressionException::invalidSyntax('Invalid value in field \'{$fieldName}\': \'{$value}\'{$validNames}');
+            throw CronExpressionException::invalidSyntax("Invalid value in field '{$fieldName}': '{$value}'{$validNames}");
         }
 
         $intValue = (int) $value;
         $range = Parser::RANGES[$fieldType->value];
 
         if ($intValue < $range[0] || $intValue > $range[1]) {
-            throw CronExpressionException::invalidSyntax('Value {$intValue} out of range [{$range[0]}-{$range[1]}] for field \'{$fieldName}\'');
+            throw CronExpressionException::invalidSyntax("Value {$intValue} out of range [{$range[0]}-{$range[1]}] for field '{$fieldName}'");
         }
     }
 
